@@ -24,3 +24,20 @@ classifiers = [
 ]
 description = 'lazyimp'
 
+[tool.setuptools]
+
+[tool.setuptools.packages.find]
+include = [
+    'lazyimp',
+    'lazyimp.*',
+]
+exclude = [
+    '*.tests',
+    '*.tests.*',
+]
+
+[tool.setuptools.package-data]
+'*' = [
+    '*.cc',
+    'LICENSE',
+]

@@ -1,4 +1,8 @@
 /*.egg-info/
+/.idea/
 /.venv*/
 /build/
 /dist/
+*.pyc
+*.pyo
+*.so
