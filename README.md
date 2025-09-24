@@ -19,17 +19,17 @@ Limited to importing whole modules (as opposed to importing individual items out
 usable anywhere. The reason for this limitation is that module-level `__getattr__` hooks
 [cannot be used](https://peps.python.org/pep-0562/#specification) to intercept access to intra-module globals:
 
-    Looking up a name as a module global will bypass module __getattr__. This is intentional, otherwise calling
-    __getattr__ for builtins will significantly harm performance.
+> Looking up a name as a module global will bypass module __getattr__. This is intentional, otherwise calling
+> __getattr__ for builtins will significantly harm performance.
 
-As a result the module globals provided by proxy_import must remain 'fixed' in the globals dict. While it would be
+As a result the module globals provided by `proxy_import` must remain 'fixed' in the globals dict. While it would be
 technically possible to return 'proxy' (or otherwise radically polymorphic) objects to simulate lazy attr imports, I
 don't consider that a good idea.
 
-For typechecking and other tooling, the real imports should be diligently duplicated above the proxy_imports in a
+For typechecking and other tooling, the real imports should be diligently duplicated above the `proxy_import`s in a
 conditional `TYPE_CHECKING` block.
 
-```
+```python
 if typing.TYPE_CHECKING:
     import foo
     
@@ -53,7 +53,7 @@ else:
 Powered by `proxy_import`, but uses the [import capture mechanism](lazyimp/capture.py) to automatically capture and
 proxy imported modules. No `TYPE_CHECKING` conditional block is necessary, but still limited to importing whole modules.
 
-```
+```python
 with lazyimp.auto_proxy_import(globals()):
     import foo
     
@@ -74,9 +74,9 @@ It is passed `globals()` for installing its hook, and thus doesn't need to be pa
 
 It may safely be called multiple times without overwriting a previously installed hook.
 
-It supports import alias by being passed a `(real_name, alias_name)` pair, but does not support star imports.
+It supports import aliases by being passed a `(real_name, alias_name)` pair, but does not support star imports.
 
-```
+```python
 if typing.TYPE_CHECKING:
     from math import pi, theta as not_theta
     
@@ -100,9 +100,9 @@ else:
 ## auto_proxy_init
 
 Powered by `proxy_init`, but uses the [import capture mechanism](lazyimp/capture.py) to automatically capture and
-proxy imported modules. No `TYPE_CHECKING` conditional block is necessary.
+proxy imported modules. As with `auto_proxy_init` no `TYPE_CHECKING` conditional block is necessary.
 
-```
+```python
 with lazyimp.auto_proxy_init(globals()):
     from math import pi, theta as not_theta
     
