@@ -3,7 +3,6 @@ import sys
 import threading
 import time
 
-from ..... import sync
 from ... import capture  # noqa
 from ... import proxy  # noqa
 
@@ -25,20 +24,19 @@ def _main() -> None:
 
     #
 
-    cl0 = sync.CountDownLatch(2)
-    ev0 = threading.Event()
+    ev = [threading.Event() for _ in range(3)]
 
     def a_main():
-        cl0.count_down()
-        ev0.wait()
+        ev[0].set()
+        ev[2].wait()
 
         say('start')
         from .base import moda  # noqa
         say('end')
 
     def b_main():
-        cl0.count_down()
-        ev0.wait()
+        ev[1].set()
+        ev[2].wait()
 
         say('start')
         from .base import modb  # noqa
@@ -49,8 +47,9 @@ def _main() -> None:
 
     a_thr.start()
     b_thr.start()
-    cl0.wait()
-    ev0.set()
+    ev[0].wait()
+    ev[1].wait()
+    ev[2].set()
     a_thr.join()
     b_thr.join()
 
