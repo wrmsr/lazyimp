@@ -50,7 +50,8 @@ else:
 
 ## auto_proxy_import
 
-Powered by `proxy_import`, but uses the [import capture mechanism](lazyimp/capture.py) to automatically capture and
+Powered by `proxy_import`, but uses the
+[import capture mechanism](https://github.com/wrmsr/lazyimp/blob/master/lazyimp/capture.py) to automatically capture and
 proxy imported modules. No `TYPE_CHECKING` conditional block is necessary, but still limited to importing whole modules.
 
 ```python
@@ -66,9 +67,10 @@ with lazyimp.auto_proxy_import(globals()):
 
 ## proxy_init
 
-Intended for use primarily in package `__init__.py` modules. Installs a [lazy globals](lazyimp/lazyglobals.py)
-module-level `__getattr__` hook and uses it to appropriately redirect imported items to underlying anonymous
-`types.ModuleType` instances. Unlike `proxy_import` it is capable of importing individual attrs from imported modules.
+Intended for use primarily in package `__init__.py` modules. Installs a
+[lazy globals](https://github.com/wrmsr/lazyimp/blob/master/lazyimp/lazyglobals.py) module-level `__getattr__` hook and
+uses it to appropriately redirect imported items to underlying anonymous `types.ModuleType` instances. Unlike
+`proxy_import` it is capable of importing individual attrs from imported modules.
 
 It is passed `globals()` for installing its hook, and thus doesn't need to be passed `__package__` for relative imports.
 
@@ -99,7 +101,8 @@ else:
 
 ## auto_proxy_init
 
-Powered by `proxy_init`, but uses the [import capture mechanism](lazyimp/capture.py) to automatically capture and
+Powered by `proxy_init`, but uses the
+[import capture mechanism](https://github.com/wrmsr/lazyimp/blob/master/lazyimp/capture.py) to automatically capture and
 proxy imported modules. As with `auto_proxy_init` no `TYPE_CHECKING` conditional block is necessary.
 
 ```python
