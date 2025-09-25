@@ -103,7 +103,7 @@ else:
 
 Powered by `proxy_init`, but uses the
 [import capture mechanism](https://github.com/wrmsr/lazyimp/blob/master/lazyimp/capture.py) to automatically capture and
-proxy imported modules. As with `auto_proxy_init` no `TYPE_CHECKING` conditional block is necessary.
+proxy imported modules. As with `auto_proxy_import` no `TYPE_CHECKING` conditional block is necessary.
 
 ```python
 with lazyimp.auto_proxy_init(globals()):
