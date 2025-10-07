@@ -5,8 +5,8 @@ st.setup(
     ext_modules=[
         st.Extension(
             name='lazyimp._capture',
-            sources=['lazyimp/_capture.cc'],
-            extra_compile_args=['-std=c++20'],
+            sources=['lazyimp/_capture.c'],
+            extra_compile_args=['-std=c11'],
             optional=True,
         ),
     ],

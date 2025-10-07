@@ -1,13 +1,13 @@
-#include <atomic>
+#include <stdatomic.h>
 
 #define PY_SSIZE_T_CLEAN
-#define Py_BUILD_CORE 1
+#define Py_BUILD_CORE
 #include "Python.h"
 #include "internal/pycore_frame.h"
 #undef Py_BUILD_CORE
 
-#if PY_VERSION_HEX < 0x030D0000
-#  error "This extension requires CPython 3.13+"
+#if PY_VERSION_HEX < 0x030B0000
+#  error "This extension requires CPython 3.11+"
 #endif
 
 //
@@ -47,16 +47,13 @@ _set_frame_builtins(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    std::atomic_ref<PyObject*> builtins_ref(iframe->f_builtins);
-    PyObject* expected = old_builtins;
-    bool success = builtins_ref.compare_exchange_strong(
-        expected,
+    if (atomic_compare_exchange_strong_explicit(
+        (_Atomic(PyObject*)*)&iframe->f_builtins,
+        &old_builtins,
         new_builtins,
-        std::memory_order_acq_rel,
-        std::memory_order_acquire
-    );
-
-    if (success) {
+        memory_order_acq_rel,
+        memory_order_acquire
+    )) {
         Py_RETURN_TRUE;
     } else {
         Py_RETURN_FALSE;
@@ -73,8 +70,12 @@ static PyMethodDef capture_methods[] = {
 };
 
 static struct PyModuleDef_Slot capture_slots[] = {
+#if PY_VERSION_HEX >= 0x030D0000
     {Py_mod_gil, Py_MOD_GIL_NOT_USED},
+#endif
+#if PY_VERSION_HEX >= 0x030C0000
     {Py_mod_multiple_interpreters, Py_MOD_MULTIPLE_INTERPRETERS_SUPPORTED},
+#endif
     {0, NULL}
 };
 
@@ -90,11 +91,7 @@ static struct PyModuleDef capture_module = {
     .m_free = NULL,
 };
 
-extern "C" {
-
 PyMODINIT_FUNC PyInit__capture(void)
 {
     return PyModuleDef_Init(&capture_module);
-}
-
 }
