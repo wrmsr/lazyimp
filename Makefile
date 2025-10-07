@@ -1,15 +1,23 @@
+.PHONY: all
+all: check test-all package-all
+
+#
+
+VENV?=13
 VENVS=\
 	14 \
 	13 \
 	12 \
-	11
+	11 \
 
-.PHONY: all
-all:
+.PHONY: test-all
+test-all:
 	for VENV in ${VENVS} ; do \
 		VENV="$$VENV" ${MAKE} test || exit 1 ; \
 	done
 
+.PHONY: package-all
+package-all:
 	for VENV in ${VENVS} ; do \
 		VENV="$$VENV" ${MAKE} package || exit 1 ; \
 	done
@@ -19,7 +27,7 @@ all:
 .PHONY: clean
 clean:
 	rm -rf \
-		.venv \
+		.mypy_cache \
 		.venvs \
 		\
 		*.egg-info \
@@ -27,6 +35,10 @@ clean:
 		dist \
 		\
 		lazyimp/*.so \
+
+#
+
+PYTHON:=".venvs/${VENV}/bin/python"
 
 .PHONY: venv
 venv:
@@ -38,24 +50,34 @@ venv:
 	@mkdir -p .venvs
 
 	@if [ ! -d ".venvs/${VENV}" ] ; then \
-		if command -v om ; then \
+		if command -v om >/dev/null ; then \
 			$$(om interp resolve "3.${VENV}") -m venv ".venvs/${VENV}" ; \
 		else \
 			uv venv ".venvs/${VENV}" --python "3.${VENV}" ; \
 		fi && \
 		\
-		".venvs/${VENV}/bin/python" -m ensurepip && \
-		".venvs/${VENV}/bin/python" -m pip install --upgrade setuptools build ; \
+		${PYTHON} -m ensurepip && \
+		${PYTHON} -m pip install --upgrade setuptools build ; \
 	fi
 
 .PHONY: build
 build: venv
-	".venvs/${VENV}/bin/python" setup.py build_ext --inplace
+	${PYTHON} setup.py build_ext --inplace
 
 .PHONY: test
 test: build
-	".venvs/${VENV}/bin/python" -m unittest lazyimp.tests.test_lazyimp
+	${PYTHON} -m unittest lazyimp.tests.test_lazyimp
 
 .PHONY: package
 package: venv
-	".venvs/${VENV}/bin/python" -m build .
+	${PYTHON} -m build .
+
+#
+
+.PHONY: check
+check: venv
+	@if ! ${PYTHON} -c 'import mypy' 2>/dev/null ; then \
+		${PYTHON} -m pip install mypy ; \
+	fi
+
+	${PYTHON} -m mypy lazyimp
