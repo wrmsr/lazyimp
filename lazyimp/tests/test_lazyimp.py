@@ -10,6 +10,9 @@ class TestProxy(unittest.TestCase):
         sys = proxy_import('sys')
         assert sys.version_info[0] == 3
 
+    def test_capture_cext(self):
+        import lazyimp._capture  # noqa
+
     def test_auto_proxy_init(self):
         from . import foo2  # noqa
 
