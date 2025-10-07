@@ -25,6 +25,8 @@ clean:
 		*.egg-info \
 		build \
 		dist \
+		\
+		lazyimp/*.so \
 
 .PHONY: venv
 venv:
