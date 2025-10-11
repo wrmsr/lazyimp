@@ -1,4 +1,5 @@
 /*.egg-info/
+/.git-bare/
 /.idea/
 /.venvs/
 /build/
